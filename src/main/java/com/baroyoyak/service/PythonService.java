@@ -15,7 +15,7 @@ public class PythonService {
 	{
 		String line = "";
 		String result = "요약결과 : ";
-		String execPath = "python python/test.py "+text.getAbsolutePath();
+		String execPath = "python python/test.py \""+text.getAbsolutePath()+"\"";
 		try {
 			Process process = Runtime.getRuntime().exec(execPath);
 			BufferedReader input =new BufferedReader(new InputStreamReader(process.getInputStream(), "euc-kr"));
