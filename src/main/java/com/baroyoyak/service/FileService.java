@@ -4,10 +4,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
@@ -38,11 +42,18 @@ public class FileService {
 		}
 	}
 	
+	public String get_format_time()
+	{
+		LocalDateTime now = LocalDateTime.now();
+		String formatedNow = now.format(DateTimeFormatter.ofPattern("MMddHHmmss"));
+		return formatedNow;
+	}
+	
 	
 	public File MultipartFile_to_File (MultipartFile file)
 	{
 		
-		File f = new File(folder_name+File.separator+file.getOriginalFilename());
+		File f = new File(folder_name+File.separator+get_format_time()+file.getOriginalFilename());
 	
 		FileOutputStream fos;
 		try {
@@ -65,6 +76,7 @@ public class FileService {
 
 	public File makeHWPFile(String title, String body)
 	{
+		title = get_format_time()+title;
 		File f = new File(folder_name+File.separator+title+".hwp");
 		
 		FileOutputStream fos;
@@ -86,6 +98,8 @@ public class FileService {
 	}
 	
 	public File makePDFFile(String file_name, String body) {
+		file_name = get_format_time()+file_name;
+		
 		
 		PdfDocument doc = new PdfDocument();
 		PdfPageBase page = doc.getPages().add();
@@ -149,4 +163,21 @@ public class FileService {
         return pdf_temp;
 	}
 	
+	
+	public static void makeTextFile(String title, String body)
+	{
+		
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("python" + File.separator+title+".txt"),"UTF8"));
+			writer.write(body);
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		
+	}
 }

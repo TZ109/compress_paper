@@ -17,15 +17,6 @@
 		<java.version>11</java.version>
 	</properties>
 	
-	<repositories>
-        <repository>
-            <id>com.e-iceblue</id>
-            <name>e-iceblue</name>
-            <url>https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/public/</url>
-        </repository>
-	</repositories>
-	
-	
 	
 	<dependencies>
 		<dependency>

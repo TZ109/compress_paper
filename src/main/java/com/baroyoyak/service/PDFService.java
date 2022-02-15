@@ -63,13 +63,6 @@ public class PDFService {
 				e.printStackTrace();
 			}
 		}
-		
-		try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		//result_file.delete();
 		
@@ -112,13 +105,6 @@ public class PDFService {
 				e.printStackTrace();
 			}
 		}
-		
-		try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		result_file.delete();
 		
@@ -149,13 +135,7 @@ public class PDFService {
 				e.printStackTrace();
 			}
 		}
-		
-		try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 
 		result_file.delete();
 		
@@ -178,13 +158,6 @@ public class PDFService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		
-		try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		result_file.delete();

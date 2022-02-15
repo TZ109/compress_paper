@@ -1,10 +1,7 @@
 package com.baroyoyak.controller;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,11 +15,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baroyoyak.service.DownloadService;
 import com.baroyoyak.service.FileService;
 import com.baroyoyak.service.PDFService;
+import com.baroyoyak.service.PythonService;
+import com.baroyoyak.thread.FileThread;
 
 
 
 @Controller
 public class MainController {
+	
+	String lock = "lock";
 	
 	@Autowired
 	FileService fileService;
@@ -30,6 +31,8 @@ public class MainController {
 	PDFService pdfService;
 	@Autowired
 	DownloadService downloadService;
+	@Autowired
+	PythonService pythonService;
 
 	@RequestMapping(path = {"","/"}, method = RequestMethod.GET)
 	public String main()
@@ -55,8 +58,27 @@ public class MainController {
 		text = text.replace(",", ", ");
 		text = text.replace(".", ". ");
 		
+		String title = fileService.get_format_time()+filename.substring(0, filename.indexOf(".pdf"));
+		
+		FileThread thread1 = new FileThread(title, text);
+		
+		thread1.start();
+		try {
+			thread1.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("쓰레드 종료 : "+title);
+		
+		File textfile = new File("python" + File.separator+title+".txt");
+		
+		text = pythonService.execPython(textfile);
+		
+		textfile.delete();
+		
 		HashMap<String,String> mymap = new HashMap<String,String>();
-		mymap.put("title", filename.subSequence(0, filename.indexOf(".pdf"))+"의 요약본");
+		mymap.put("title", filename.substring(0, filename.indexOf(".pdf"))+"의 요약본");
 		mymap.put("body", text);
 		JSONObject data = new JSONObject(mymap);
 		
