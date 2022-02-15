@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.baroyoyak.service;
 
 public class PythonService {
 

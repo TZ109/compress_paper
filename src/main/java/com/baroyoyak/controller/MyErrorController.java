@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.baroyoyak.controller;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;

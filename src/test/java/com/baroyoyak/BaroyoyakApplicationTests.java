@@ -1,10 +1,10 @@
-package com.example.demo;
+package com.baroyoyak;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class VaneBaronarinApplicationTests {
+class BaroyoyakApplicationTests {
 
 	@Test
 	void contextLoads() {

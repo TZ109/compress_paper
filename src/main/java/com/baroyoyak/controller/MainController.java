@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.baroyoyak.controller;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,9 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.service.DownloadService;
-import com.example.demo.service.FileService;
-import com.example.demo.service.PDFService;
+import com.baroyoyak.service.DownloadService;
+import com.baroyoyak.service.FileService;
+import com.baroyoyak.service.PDFService;
+
+
 
 @Controller
 public class MainController {

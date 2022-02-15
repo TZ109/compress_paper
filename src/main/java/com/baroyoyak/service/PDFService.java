@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.baroyoyak.service;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,8 +16,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.service.pdf.GetLinesFromPDF;
-
+import com.baroyoyak.service.pdf.GetLinesFromPDF;
 import com.spire.pdf.*;
 import com.spire.pdf.exporting.text.SimpleTextExtractionStrategy;
 import com.spire.pdf.widget.PdfPageCollection;
