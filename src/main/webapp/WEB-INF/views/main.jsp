@@ -18,7 +18,7 @@
 		const upload_file = document.getElementById('upload_file');
 		var progress_btn = document.getElementById('progress_btn');
 		upload_file.click();
-		
+
 		//upload_file.addEventListener('change',(event)=>{
 		//	const fileList = event.target.files;
 		//	console.log(fileList[0]);
@@ -29,37 +29,58 @@
 	
 	function btn_upload_change()
 	{
-		var form = document.getElementById('upload_file');
-		console.log($('#upload_file')[0].files[0])
-		var formData = new FormData();
-		formData.append("file", $('#upload_file')[0].files[0]);
-		console.log(formData)
+		var upload_btn = document.getElementById("upload_btn");
 		
-		var result_title = document.getElementById('result_title');
-		var result_body = document.getElementById('result_body');
-		
-        $.ajax({
-			type : 'POST',
-			url: "/upload",
-			data: formData,
-			 dataType: "json",
-			enctype: 'multipart/form-data',
-			processData:false,
-			contentType:false,
+		//console.log($('#upload_file')[0].files[0])
+		if(document.getElementById("upload_file").value)
+		{
+			var form = document.getElementById('upload_file');
+			var uploadfile = $('#upload_file')[0].files[0];
 			
-			success: function(res){
-				console.log(res)
-				progress_btn.innerText = "완료";
-				result_title.innerText = res.title;
-				result_body.innerText = res.body;
-				
-			},
-			error: function(err){
-				alert("Error : "+err)
+			var formData = new FormData();
+			formData.append("file", uploadfile);
+			//console.log(formData)
+			
+			if(!uploadfile.name.includes(".pdf"))
+			{
+				alert("pdf형식의 문서만 업로드 가능합니다.")
+				return false;
 			}
-			});
 			
-		progress_btn.innerText = "처리중";
+			var paper_compressed = document.getElementById('paper_compressed');
+			var result_title = document.getElementById('result_title');
+			var result_body = document.getElementById('result_body');
+			
+	        $.ajax({
+				type : 'POST',
+				url: "/upload",
+				data: formData,
+				 dataType: "json",
+				enctype: 'multipart/form-data',
+				processData:false,
+				contentType:false,
+				
+				success: function(res){
+					progress_btn.innerText = "완료";
+					result_title.innerText = res.title;
+					result_body.innerText = res.body;
+					paper_compressed.style.display = 'block';
+					$('#progress_btn').toggleClass('btn-warning');
+					$('#progress_btn').toggleClass('btn-secondary');
+					upload_btn.disabled = false;
+				},
+				error: function(err){
+					alert("Error : "+err)
+				}
+				});
+				
+			progress_btn.innerText = "처리중";
+			$('#progress_btn').toggleClass('btn-secondary');
+			$('#progress_btn').toggleClass('btn-warning');
+			upload_btn.disabled = true;
+		}
+		
+		
 	}
 	
 	function download_file()
@@ -74,6 +95,7 @@
 		
 		$('#download_submit').submit();
 	}
+	
 </script>
 
 <body>
@@ -84,30 +106,32 @@
                 <div class="d-flex flex-row justify-content-between align-items-center px-2">
                     <img src="/img/bi-08.png" alt="로고">
                     <div class="d-flex flex-row">
-                        <button class="btn btn-primary rounded me-2" onclick="btn_upload()">업로드</button>
-                        <button class="btn btn-secondary rounded text-white" id="progress_btn">상태</button>
+                        <button class="btn btn-primary rounded me-2" onclick="btn_upload()" id="upload_btn">업로드</button>
+                        <button class="btn btn-secondary rounded text-white" disabled id="progress_btn">상태</button>
                     </div>
                     
                     <input type="file" id="upload_file" style="display:none" required onchange="btn_upload_change()">
                     
                     
                 </div>
-                <p class="px-3">원하시는 특허 문서를 업로드 해주세요.</p>
                 
+                <p class="px-3">원하시는 특허 문서를 업로드 해주세요.</p>
+            </div>
+        </div>
+        <div class="row flex-row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5 mt-2" style="display:none" id="paper_compressed">
+
                 
 	                <p class="px-3">요약 결과!</p>
 	                <div class="border border-dark mx-3 mb-2 px-1 rounded-2" id="result_title"
 	                        style="min-height:30px; max-height:70px; font-size:14px;"></div>
-	                <div class="border border-dark mx-3 px-1 rounded-2" id="result_body"
+	                <div class="border border-dark mx-3 px-1 rounded-2 mb-1" id="result_body"
 	                        style="min-height:150px; max-height:400px; overflow-x :hidden; overflow-y :scroll; font-size:12px;">
 	                </div>
-                
-            </div>
-        </div>
-        <div class="row flex-row justify-content-center">
-            <div class="col-12 col-md-6 col-lg-5 mt-2 d-flex flex-row mx-5 px-4 ">
-                <div class="btn btn-primary me-2" onclick="download_file()">다운로드</div>
-                <div class="btn btn-secondary ">취소</div>
+            	<div class="d-flex flex-row mx-3">
+	                <div class="btn btn-primary me-2" onclick="download_file()">다운로드</div>
+	                <div class="btn btn-secondary " onclick="location.reload()">취소</div>
+                </div>
             </div>
             
             <form method="post" action="/download" id="download_submit">

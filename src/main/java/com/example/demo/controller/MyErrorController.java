@@ -19,13 +19,13 @@ public class MyErrorController implements ErrorController {
 		if (status != null) {
 			int statusCode = Integer.valueOf(status.toString());
 			if (statusCode == HttpStatus.NOT_FOUND.value()) {
-				return "main";//VIEW_PATH + "404";
+				return "redirect:/";//VIEW_PATH + "404";
 			}
 			if (statusCode == HttpStatus.FORBIDDEN.value()) {
-				return "main";// VIEW_PATH + "500";
+				return "redirect:/";// VIEW_PATH + "500";
 			}
 		}
-		return "main";
+		return "redirect:/";
 	}
 	
 	

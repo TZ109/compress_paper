@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.service.DownloadService;
 import com.example.demo.service.FileService;
-import com.example.demo.service.PDFDocService;
+import com.example.demo.service.PDFService;
 
 @Controller
 public class MainController {
@@ -22,7 +25,7 @@ public class MainController {
 	@Autowired
 	FileService fileService;
 	@Autowired
-	PDFDocService pdfDocService;
+	PDFService pdfService;
 	@Autowired
 	DownloadService downloadService;
 
@@ -39,12 +42,23 @@ public class MainController {
 		String filename = file.getOriginalFilename();
 		
 		File result_file = fileService.MultipartFile_to_File(file);
-		String text = pdfDocService.getText(result_file);
+		String text = pdfService.getText_spire(result_file);
+		
+		text = text.replace(System.lineSeparator(), "");
+		text = text.replaceAll("-\\s[0-9]+\\s-", "");
+		text = text.replaceAll("\\[[0-9]+\\]", "");
+		text = text.replace("                 ", "");
+		text = text.replace(", ", ",");
+		text = text.replace(". ", ".");
+		text = text.replace(",", ", ");
+		text = text.replace(".", ". ");
 		
 		HashMap<String,String> mymap = new HashMap<String,String>();
 		mymap.put("title", filename.subSequence(0, filename.indexOf(".pdf"))+"의 요약본");
 		mymap.put("body", text);
 		JSONObject data = new JSONObject(mymap);
+		
+		
 		
 		return data;
 	}
@@ -52,9 +66,11 @@ public class MainController {
 	
 	@PostMapping("/download")
 	public void download(String title, String body, HttpServletResponse response){
-		//System.out.println("body : "+body);
-		File file = fileService.String_to_File(title, body);
-		downloadService.downloadResult(title, body, response, file);
+		//System.out.println("body : \n"+body);
+		//File file = fileService.makeHWPFile(title, body);
+		
+		File file = fileService.makePDFFile(title, body);
+		downloadService.downloadResult_pdf(title, body, response, file);
 	}
 
 }
