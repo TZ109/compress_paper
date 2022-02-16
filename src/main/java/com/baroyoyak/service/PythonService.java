@@ -8,25 +8,45 @@ import java.io.UnsupportedEncodingException;
 
 import org.springframework.stereotype.Service;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
+
+import java.io.ByteArrayOutputStream;
+
 @Service
 public class PythonService {
 
-	public String execPython(File text)
+	
+	public String execApachePy(File text)
 	{
-		String line = "";
-		String result = "요약결과 : ";
-		String execPath = "python python/test.py \""+text.getAbsolutePath()+"\"";
-		try {
-			Process process = Runtime.getRuntime().exec(execPath);
-			BufferedReader input =new BufferedReader(new InputStreamReader(process.getInputStream(), "euc-kr"));
-			 
-	        while ((line = input.readLine()) !=null) {
-	            //System.out.println(line);
-	            result+=line;
-	        }
-	        
-	        input.close();
+		String[] command = new String[4];
+		command[0] = "python";
+		command[1] = "python/test.py";
+		command[2] = text.getAbsolutePath();
 
+
+		String result = "요약결과 : ";
+		try {
+			CommandLine commandLine = CommandLine.parse(command[0]);
+	        for (int i = 1, n = command.length; i < n; i++) {
+	            commandLine.addArgument(command[i]);
+	        }
+
+	        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+	        PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(outputStream);
+	        DefaultExecutor executor = new DefaultExecutor();
+	        executor.setStreamHandler(pumpStreamHandler);
+	        executor.setExitValue(0);//파이썬 에러 시 exit() 종료 번호를 입력
+	        ExecuteWatchdog watchdog = new ExecuteWatchdog(100000);
+	        executor.setWatchdog(watchdog);
+	        
+	        executor.execute(commandLine);
+
+	        //System.out.println("output: " + outputStream.toString());
+	        result += outputStream.toString("euc-kr");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,6 +56,36 @@ public class PythonService {
 		return result;
 	}
 	
+	//파이썬 실행 후 종료하기까지 대기를 못함
+	public String execPython(File text)
+	{
+		int i=0;
+		String line = "";
+		String result = "요약결과 : ";
+		String execPath = "python python/test.py \""+text.getAbsolutePath()+"\"";
+		try {
+			Process process = Runtime.getRuntime().exec(execPath);
+			process.waitFor();
+			System.out.println("파이썬 종료");
+			
+			BufferedReader input =new BufferedReader(new InputStreamReader(process.getInputStream(), "euc-kr"));
+	        while ((line = input.readLine()) !=null) {
+	            System.out.println(i++);
+	            result+=line;
+	        }
+	        
+	        input.close();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(result);
+		
+		return result;
+	}
+	
+	//파일을 읽지 못하는 버전
 	public String executePython(String text)
 	{
 		String result="";

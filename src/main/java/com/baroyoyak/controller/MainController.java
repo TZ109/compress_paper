@@ -73,7 +73,7 @@ public class MainController {
 		
 		File textfile = new File("python" + File.separator+title+".txt");
 		
-		text = pythonService.execPython(textfile);
+		text = pythonService.execApachePy(textfile);
 		
 		textfile.delete();
 		
