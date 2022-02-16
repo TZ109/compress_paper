@@ -92,13 +92,13 @@ public class PDFService {
 					text += page.extractText(true);
 					sb.append(text);
 				}
-				
-			FileWriter writer = new FileWriter("temp/result.txt");
+			/*	
+			FileWriter writer = new FileWriter("temp"+File.separator+"result.txt");
 				
 			writer.write(sb.toString());
 				
 			writer.flush();
-
+			*/
 			doc.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
