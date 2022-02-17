@@ -98,7 +98,7 @@ public class FileService {
 	}
 	
 	public File makePDFFile(String file_name, String body) {
-		file_name = get_format_time()+file_name;
+		String server_file_name = get_format_time()+file_name;
 		
 		
 		PdfDocument doc = new PdfDocument();
@@ -118,6 +118,11 @@ public class FileService {
         PdfStringFormat format1 = new PdfStringFormat();
         format1.setAlignment(PdfTextAlignment.Center);
         
+        
+        if(file_name.length()>30)
+        {
+        	file_name = file_name.substring(0, 20)+"...의 요약본";
+        }
         page.getCanvas().drawString(file_name, font1, brush1, new Point2D.Float((float)page.getActualBounds(true).getWidth()/2, 0),format1);
         
         PdfTextWidget widget = new PdfTextWidget(body, font2, brush2);
@@ -129,8 +134,8 @@ public class FileService {
         
         widget.draw(page, rect, layout);
         
-        doc.saveToFile(folder_name+File.separator+file_name+".pdf");
-        File pdf_temp = new File(folder_name+File.separator+file_name+".pdf");
+        doc.saveToFile(folder_name+File.separator+server_file_name+".pdf");
+        File pdf_temp = new File(folder_name+File.separator+server_file_name+".pdf");
         
         
         //10장이 넘어가면 자르기
@@ -144,7 +149,7 @@ public class FileService {
 				{
 					pdfDoc.removePage(i);
 				}
-				pdfDoc.save(folder_name+File.separator+file_name+".pdf");
+				pdfDoc.save(folder_name+File.separator+server_file_name+".pdf");
 				pdfDoc.close();
 				
 			}

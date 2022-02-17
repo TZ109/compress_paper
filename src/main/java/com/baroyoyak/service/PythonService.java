@@ -22,6 +22,7 @@ public class PythonService {
 	
 	public String execApachePy(File text)
 	{
+		int[] exitvalues = {0,1};
 		String[] command = new String[4];
 		command[0] = "python";
 		command[1] = "python/test.py";
@@ -39,7 +40,7 @@ public class PythonService {
 	        PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(outputStream);
 	        DefaultExecutor executor = new DefaultExecutor();
 	        executor.setStreamHandler(pumpStreamHandler);
-	        executor.setExitValue(0);//파이썬 에러 시 exit() 종료 번호를 입력
+	        executor.setExitValues(exitvalues);//파이썬 프로그램 에러 리턴 시 exit() 종료 번호를 입력
 	        ExecuteWatchdog watchdog = new ExecuteWatchdog(100000);
 	        executor.setWatchdog(watchdog);
 	        

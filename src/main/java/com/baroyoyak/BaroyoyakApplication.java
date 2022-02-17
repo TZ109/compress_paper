@@ -13,6 +13,7 @@ public class BaroyoyakApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BaroyoyakApplication.class, args);
+		System.out.print("server starts successfully \nspring ver : "+ org.springframework.core.SpringVersion.getVersion());
 	}
 
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder)
