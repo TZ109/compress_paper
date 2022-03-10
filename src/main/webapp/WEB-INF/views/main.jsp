@@ -34,13 +34,15 @@
 		//console.log($('#upload_file')[0].files[0])
 		if(document.getElementById("upload_file").value)
 		{
+			var pdf_layer = document.getElementById('pdf_layer');
 			var form = document.getElementById('upload_file');
 			var uploadfile = $('#upload_file')[0].files[0];
-			
+			pdf_layer.style.display = "none";
 			var formData = new FormData();
 			formData.append("file", uploadfile);
 			//console.log(formData)
 			
+
 			if(!uploadfile.name.includes(".pdf"))
 			{
 				alert("pdf형식의 문서만 업로드 가능합니다.")
@@ -61,6 +63,7 @@
 				contentType:false,
 				
 				success: function(res){
+
 					progress_btn.innerText = "완료";
 					result_title.innerText = res.title;
 					result_body.innerText = res.body;
@@ -101,23 +104,83 @@
 <body>
 
     <div class="container-fluid px-0">
-        <div class="row flex-row justify-content-center">
-            <div class="col-12 col-md-6 col-lg-5 mt-2">
-                <div class="d-flex flex-row justify-content-between align-items-center px-2">
-                    <img src="/img/bi-08.png" alt="로고">
+        <div class="row d-flex justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5 mt-2 mx-0 px-4">
+                <div class="d-flex flex-row justify-content-between align-items-center px-0">
+                    <img src="/img/bi-08.png" alt="로고" onclick="location.reload()">
                     <div class="d-flex flex-row">
-                        <button class="btn btn-primary rounded me-2" onclick="btn_upload()" id="upload_btn">업로드</button>
-                        <button class="btn btn-secondary rounded text-white" disabled id="progress_btn">상태</button>
+                        <!--<button class="btn btn-primary rounded me-2" onclick="btn_upload()" id="upload_btn">업로드</button>-->
+                        <button class="btn btn-secondary rounded text-white" disabled id="progress_btn">대기중</button>
                     </div>
                     
                     <input type="file" id="upload_file" style="display:none" required onchange="btn_upload_change()">
-                    
-                    
                 </div>
-                
-                <p class="px-3">원하시는 특허 문서를 업로드 해주세요.</p>
             </div>
+			
         </div>
+		<div id="first_layer">
+			<div class="row d-flex justify-content-center mx-2">
+				<div class="col-12 col-md-6 col-lg-5 mt-5 py-5" style="border: 4px dashed #000000">
+					<div class="d-flex flex-col justify-content-center align-items-center py-1">
+						<p class="my-0">요약 문서의 업로드 방식을</p>
+					</div>
+					<div class="d-flex flex-col justify-content-center align-items-center py-1">
+						<p>아래의 버튼을 통해 선택해주세요</p>
+					</div>
+					<div class="d-flex flex-col justify-content-center align-items-center py-1">
+						<button class="col-4 btn btn-primary" onclick="text_layer_open()">텍스트 입력</button>
+					</div>
+					<div class="d-flex flex-col justify-content-center align-items-center py-1">
+						<button class="col-4 btn btn-primary" onclick="pdf_layer_open()">PDF 파일</button>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+
+		<div id="text_layer" style="display: none;" >
+			<div class="row d-flex justify-content-center mx-2" >
+				<div class="col-12 col-md-6 col-lg-5 mt-0 py-5 px-2">
+					<p class="text-center">텍스트를 입력하시고 업로드 버튼을 클릭해주세요.</p>
+					<textarea class="w-100" rows="10"></textarea>
+					<div class="row d-flex justify-content-center">
+						<div class="col-12 col-md-6 col-lg-5 mt-3 py-0 px-0 d-flex justify-content-center">
+							<button class="btn btn-primary me-1">업로드</button>
+							<button class="btn btn-primary" onclick="location.reload()">취소</button>
+						</div>
+					</div>
+				</div>		
+			</div>
+		
+		</div>
+
+		<div id="pdf_layer" style="display: none;">
+			
+			<div class="row d-flex justify-content-center py-5 mx-2">
+				<div class="col-12 col-md-6 col-lg-5 py-5" style="border:4px dashed #000000;">
+				  <p class="d-flex justify-content-center">파일을 드래그 해서 넣어주시거나</p>
+				  <p class="d-flex justify-content-center">아래 버튼을 클릭해서 파일을 선택해주세요.</p>
+				  <div class="d-flex justify-content-center"><img src="/img/uploadBtn.png" alt="" class="col-3" onclick="btn_upload()"/></div>
+				</div>
+			</div>
+			
+		</div>
+		
+		<script>
+			function text_layer_open(){
+				var first_layer = document.getElementById('first_layer');
+				var text_layer = document.getElementById('text_layer');
+				first_layer.style.display = 'none';
+				text_layer.style.display = 'block';
+			}
+			function pdf_layer_open(){
+				var first_layer = document.getElementById('first_layer');
+				var pdf_layer = document.getElementById('pdf_layer');
+				first_layer.style.display = 'none';
+				pdf_layer.style.display = 'block';
+			}
+		</script>
+		
         <div class="row flex-row justify-content-center">
             <div class="col-12 col-md-6 col-lg-5 mt-2" style="display:none" id="paper_compressed">
 
