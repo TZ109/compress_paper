@@ -40,9 +40,10 @@ public class MainController {
 		return "main";
 	}
 	
+	//pdf 입력
 	@ResponseBody
-	@PostMapping(value = { "/upload" }, consumes = { "multipart/form-data" })
-	public JSONObject upload(@RequestParam(value="file", required=true) MultipartFile file) throws IOException
+	@PostMapping(value = { "/pdf_upload" }, consumes = { "multipart/form-data" })
+	public JSONObject pdf_upload(@RequestParam(value="file", required=true) MultipartFile file) throws IOException
 	{
 		String filename = file.getOriginalFilename();
 		
@@ -73,7 +74,7 @@ public class MainController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("쓰레드 종료 : "+title);
+		System.out.println("쓰레드 종료 : "+text);
 		
 		File textfile = new File("python" + File.separator+title+".txt");
 		
@@ -82,9 +83,54 @@ public class MainController {
 		text = pythonService.execApachePy(textfile);
 		
 		textfile.delete();
+		
+		
+		
 		//json형태로 리턴
 		HashMap<String,String> mymap = new HashMap<String,String>();
 		mymap.put("title", filename.substring(0, filename.indexOf(".pdf"))+"의 요약본");
+		mymap.put("body", text);
+		JSONObject data = new JSONObject(mymap);
+		
+
+		return data;
+	}
+	
+	//텍스트 입력
+	@ResponseBody
+	@PostMapping(value = { "/text_upload" })
+	public JSONObject text_upload(String textbody) throws IOException
+	{
+		System.out.println(textbody);
+		
+		String title = fileService.get_format_time();
+		
+		//쓰레드 생성해서 파이썬에 전달해줄 텍스트 파일 만들기
+		FileThread thread1 = new FileThread(title, textbody);
+		
+		thread1.start();
+		try {
+			//파일 만드는 동안 메인 쓰레드 대기
+			thread1.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("쓰레드 종료 : "+textbody);
+		
+		File textfile = new File("python" + File.separator+title+".txt");
+		
+		
+		//파이썬 실행, 요약 텍스트 받아옴
+		String text = pythonService.execApachePy(textfile);
+		
+		textfile.delete();
+		
+		
+		
+		//json형태로 리턴
+		HashMap<String,String> mymap = new HashMap<String,String>();
+		mymap.put("title", "텍스트 요약본");
 		mymap.put("body", text);
 		JSONObject data = new JSONObject(mymap);
 		
@@ -99,6 +145,7 @@ public class MainController {
 		
 		File file = fileService.makePDFFile(title, body);
 		downloadService.downloadResult_pdf(title, body, response, file);
+		
 	}
 
 }

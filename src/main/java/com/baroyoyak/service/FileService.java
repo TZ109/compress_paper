@@ -55,18 +55,29 @@ public class FileService {
 		
 		File f = new File(folder_name+File.separator+get_format_time()+file.getOriginalFilename());
 	
-		FileOutputStream fos;
+		FileOutputStream fos = null;
 		try {
 			f.createNewFile();
 			fos = new FileOutputStream(f);
 			fos.write(file.getBytes());
-			fos.close();
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally
+		{
+			if(fos!=null)
+				try {
+					fos.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
 		}
 		
 		//f.delete();
@@ -137,10 +148,10 @@ public class FileService {
         doc.saveToFile(folder_name+File.separator+server_file_name+".pdf");
         File pdf_temp = new File(folder_name+File.separator+server_file_name+".pdf");
         
-        
+        PDDocument pdfDoc = null;
         //10장이 넘어가면 자르기
         try {
-			PDDocument pdfDoc = PDDocument.load(pdf_temp);
+			pdfDoc = PDDocument.load(pdf_temp);
 			int pagenum = pdfDoc.getNumberOfPages();
 			System.out.println("pagenum1 : "+pagenum);
 			if(pagenum>10)
@@ -150,12 +161,7 @@ public class FileService {
 					pdfDoc.removePage(i);
 				}
 				pdfDoc.save(folder_name+File.separator+server_file_name+".pdf");
-				pdfDoc.close();
 				
-			}
-			else
-			{
-				pdfDoc.close();
 			}
 			
 			
@@ -163,6 +169,16 @@ public class FileService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        finally
+        {
+        	if(pdfDoc!=null)
+				try {
+					pdfDoc.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        }
         
         
         return pdf_temp;
@@ -176,10 +192,19 @@ public class FileService {
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("python" + File.separator+title+".txt"),"UTF8"));
 			writer.write(body);
-			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally
+		{
+			if(writer!=null)
+				try {
+					writer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 
 		

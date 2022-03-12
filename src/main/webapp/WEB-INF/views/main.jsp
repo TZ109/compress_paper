@@ -13,6 +13,42 @@
 </head>
 
 <script>
+    function text_upload()
+    {
+    	var textbody = document.getElementById("textbody").value
+    	var paper_compressed = document.getElementById('paper_compressed');
+		var result_title = document.getElementById('result_title');
+		var result_body = document.getElementById('result_body');
+		var progress_btn = document.getElementById('progress_btn');
+		var text_layer = document.getElementById('text_layer');
+		
+    	$.ajax({
+			type : 'POST',
+			url: "/text_upload",
+			data: {"textbody":textbody},
+			success: function(res){
+
+				progress_btn.innerText = "완료";
+				result_title.innerText = res.title;
+				result_body.innerText = res.body;
+				paper_compressed.style.display = 'block';
+				$('#progress_btn').toggleClass('btn-warning');
+				$('#progress_btn').toggleClass('btn-secondary');
+				text_layer.style.display = "none";
+			},
+			error: function(err){
+				alert(err)
+				console.log(err)
+			}
+			});
+			
+		progress_btn.innerText = "처리중";
+		$('#progress_btn').toggleClass('btn-secondary');
+		$('#progress_btn').toggleClass('btn-warning');
+    }
+    
+
+
 	function btn_upload()
 	{
 		const upload_file = document.getElementById('upload_file');
@@ -23,68 +59,66 @@
 		//	const fileList = event.target.files;
 		//	console.log(fileList[0]);
 		//})
-		
-		
 	}
 	
 	function btn_upload_change()
 	{
-		var upload_btn = document.getElementById("upload_btn");
-		
-		//console.log($('#upload_file')[0].files[0])
 		if(document.getElementById("upload_file").value)
 		{
-			var pdf_layer = document.getElementById('pdf_layer');
-			var form = document.getElementById('upload_file');
 			var uploadfile = $('#upload_file')[0].files[0];
-			pdf_layer.style.display = "none";
-			var formData = new FormData();
-			formData.append("file", uploadfile);
-			//console.log(formData)
-			
+			upload_file(uploadfile)
+		}
+	}
+	
+	function upload_file(uploadfile)
+	{
+		var progress_btn = document.getElementById('progress_btn');
+		
+		var pdf_layer = document.getElementById('pdf_layer');
+		pdf_layer.style.display = "none";
+		
+		
+		var formData = new FormData();
+		formData.append("file", uploadfile);
 
-			if(!uploadfile.name.includes(".pdf"))
-			{
-				alert("pdf형식의 문서만 업로드 가능합니다.")
-				return false;
-			}
-			
-			var paper_compressed = document.getElementById('paper_compressed');
-			var result_title = document.getElementById('result_title');
-			var result_body = document.getElementById('result_body');
-			
-	        $.ajax({
-				type : 'POST',
-				url: "/upload",
-				data: formData,
-				 dataType: "json",
-				enctype: 'multipart/form-data',
-				processData:false,
-				contentType:false,
-				
-				success: function(res){
-
-					progress_btn.innerText = "완료";
-					result_title.innerText = res.title;
-					result_body.innerText = res.body;
-					paper_compressed.style.display = 'block';
-					$('#progress_btn').toggleClass('btn-warning');
-					$('#progress_btn').toggleClass('btn-secondary');
-					upload_btn.disabled = false;
-				},
-				error: function(err){
-					alert("Error : "+err)
-				}
-				});
-				
-			progress_btn.innerText = "처리중";
-			$('#progress_btn').toggleClass('btn-secondary');
-			$('#progress_btn').toggleClass('btn-warning');
-			upload_btn.disabled = true;
+		if(!uploadfile.name.includes(".pdf"))
+		{
+			alert("pdf형식의 문서만 업로드 가능합니다.")
+			return false;
 		}
 		
+		var paper_compressed = document.getElementById('paper_compressed');
+		var result_title = document.getElementById('result_title');
+		var result_body = document.getElementById('result_body');
 		
+        $.ajax({
+			type : 'POST',
+			url: "/pdf_upload",
+			data: formData,
+			 dataType: "json",
+			enctype: 'multipart/form-data',
+			processData:false,
+			contentType:false,
+			
+			success: function(res){
+
+				progress_btn.innerText = "완료";
+				result_title.innerText = res.title;
+				result_body.innerText = res.body;
+				paper_compressed.style.display = 'block';
+				$('#progress_btn').toggleClass('btn-warning');
+				$('#progress_btn').toggleClass('btn-secondary');
+			},
+			error: function(err){
+				alert(err)
+			}
+			});
+			
+		progress_btn.innerText = "처리중";
+		$('#progress_btn').toggleClass('btn-secondary');
+		$('#progress_btn').toggleClass('btn-warning');
 	}
+	
 	
 	function download_file()
 	{
@@ -142,10 +176,10 @@
 			<div class="row d-flex justify-content-center mx-2" >
 				<div class="col-12 col-md-6 col-lg-5 mt-0 py-5 px-2">
 					<p class="text-center">텍스트를 입력하시고 업로드 버튼을 클릭해주세요.</p>
-					<textarea class="w-100" rows="10"></textarea>
+					<textarea class="w-100" rows="10" id="textbody"></textarea>
 					<div class="row d-flex justify-content-center">
 						<div class="col-12 col-md-6 col-lg-5 mt-3 py-0 px-0 d-flex justify-content-center">
-							<button class="btn btn-primary me-1">업로드</button>
+							<button class="btn btn-primary me-1" onclick="text_upload()">업로드</button>
 							<button class="btn btn-primary" onclick="location.reload()">취소</button>
 						</div>
 					</div>
@@ -154,10 +188,43 @@
 		
 		</div>
 
-		<div id="pdf_layer" style="display: none;">
+		<script>
+		function file_drag_drop()
+		{
+			var file_box = $('#file_box')
+			file_box.on('dragenter',function(e){
+				e.stopPropagation()
+				e.preventDefault()
+			})
+			file_box.on('dragleave',function(e){
+				e.stopPropagation()
+				e.preventDefault()
+			})
+			file_box.on('dragover',function(e){
+				e.stopPropagation()
+				e.preventDefault()
+			})
 			
+			file_box.on('drop',function(e){
+				e.preventDefault()
+				console.log('drop')
+				var files = e.originalEvent.dataTransfer.files;
+	            if(files != null){
+	                if(files.length < 1){
+	                    return;
+	                }
+	                upload_file(files[0])
+	            }else{
+	                alert("파일이 업로드 되지 않았습니다.");
+	            }
+				
+			})
+		}
+		</script>
+
+		<div id="pdf_layer" style="display: none;">
 			<div class="row d-flex justify-content-center py-5 mx-2">
-				<div class="col-12 col-md-6 col-lg-5 py-5" style="border:4px dashed #000000;">
+				<div class="col-12 col-md-6 col-lg-5 py-5" style="border:4px dashed #000000;" id="file_box">
 				  <p class="d-flex justify-content-center">파일을 드래그 해서 넣어주시거나</p>
 				  <p class="d-flex justify-content-center">아래 버튼을 클릭해서 파일을 선택해주세요.</p>
 				  <div class="d-flex justify-content-center"><img src="/img/uploadBtn.png" alt="" class="col-3" onclick="btn_upload()"/></div>
@@ -178,6 +245,7 @@
 				var pdf_layer = document.getElementById('pdf_layer');
 				first_layer.style.display = 'none';
 				pdf_layer.style.display = 'block';
+				file_drag_drop()
 			}
 		</script>
 		
